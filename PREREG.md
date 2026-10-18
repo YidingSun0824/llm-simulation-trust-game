@@ -90,6 +90,8 @@ No correction for multiple comparisons is applied. This is a small exploratory s
 
 ## 6. Deviations
 
-Any change made after this file was committed is listed here, with its date and reason.
+Any change made after this file was first committed (`4b64752`, 2026-10-17, before any API call) is listed here, with its date and reason. The hypotheses in §3 have not been changed. The pilot transcripts were read before the file was locked.
 
-* *(none yet)*
+* **2026-10-17, after `check`, before the pilots.** Raised `max_tokens` from 800 to 1500 for Haiku and Sonnet. Sonnet's answers ran to about 600 output tokens despite the 100-word request, so the `DECISION:` line risked being truncated. The prompts were not changed.
+* **2026-10-17, after the pilots.** The recitation check now looks for the fraction patterns (5/6, 1/6) in the narrative frame only. In the neutral frame these fractions come from correct arithmetic (c/60 = 1/6 at c = 10; 1 − c/30 = 5/6 at c = 5). Every pilot match was of this kind. The paper-name check is unchanged.
+* **2026-10-17, after the pilots.** Added a crude keyword measure of moral or honesty language in the trustee's reasoning. In the narrative frame, pilot trustees sometimes refused to defect on ethical grounds ("I won't deceive Alice"). This measure is descriptive only and is not a test.

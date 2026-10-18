@@ -28,14 +28,21 @@ SURFACE = "#fcfcfb"
 SERIES = {"informed": "#2a78d6", "uninformed": "#eb6834", "baseline": INK_3}
 SERIES_FID = {"perfect": "#2a78d6", "sampled": "#eb6834"}
 
+# Recitation patterns.  The fraction patterns are only meaningful in the NARRATIVE frame: in the
+# neutral frame 1/6 and 5/6 arise from the models' own arithmetic (c/60 = 1/6 at c = 10,
+# 1 - c/30 = 5/6 at c = 5), as the pilot transcripts showed.
 RECITATION = {
-    "five_sixths": r"5\s*/\s*6|83\.3",
-    "one_sixth": r"1\s*/\s*6|16\.7",
-    "paper_names": r"kova[rř]|oesterheld|conitzer|ijcai",
-    "bobble_in_neutral": r"bobble",
-    "equilibrium_talk": r"equilibri|nash|indifferen|mixed strateg",
+    "paper_names": (r"kova[rř]|oesterheld|conitzer|ijcai|focal", None),
+    "five_sixths": (r"5\s*/\s*6|83\.3", "narrative"),
+    "one_sixth": (r"1\s*/\s*6|16\.7", "narrative"),
+    "bobble_in_neutral": (r"bobble", "neutral"),
+    "equilibrium_talk": (r"equilibri|nash|indifferen|mixed strateg", None),
 }
 
+# Exploratory (added after reading pilot transcripts): moral / honesty language in the trustee's
+# reasoning, e.g. "I won't deceive Alice".  Lets us see how much narrative-frame cooperation is
+# ethical refusal rather than strategy.
+MORAL = r"deceiv|fraud|steal|dishonest|honest|unethical|ethic|betray|won'?t do|wrong to|harm"
 
 def wilson(k: int, n: int, z: float = 1.96):
     if n == 0:
@@ -157,11 +164,28 @@ def recitation_table(df: pd.DataFrame) -> pd.DataFrame:
         texts = [_last_text(x) for col in ("alice_attempts", "bobble_attempts", "copy_attempts") for x in g[col]
                  if x]
         row = {"model": model, "frame": frame, "responses": len(texts)}
-        for name, pat in RECITATION.items():
-            if name == "bobble_in_neutral" and frame != "neutral":
+        for name, (pat, only) in RECITATION.items():
+            if only and frame != only:
+                row[name] = "n/a"
                 continue
             rx = re.compile(pat, re.IGNORECASE)
             row[name] = int(sum(bool(rx.search(t)) for t in texts))
+        rows.append(row)
+    return pd.DataFrame(rows)
+
+
+def moral_table(df: pd.DataFrame) -> pd.DataFrame:
+    """Share of trustee (real Bobble) answers using moral/honesty language, by choice."""
+    rx = re.compile(MORAL, re.IGNORECASE)
+    rows = []
+    for (model, frame, cond), g in df.groupby(["model", "frame", "condition"]):
+        g = g.dropna(subset=["bobble_action"])
+        moral = g["bobble_attempts"].apply(lambda a: bool(rx.search(_last_text(a))))
+        row = {"model": model, "frame": frame, "condition": cond, "n": len(g),
+               "defect_rate": float((g["bobble_action"] == "DEFECT").mean()) if len(g) else np.nan,
+               "moral_language": float(moral.mean()) if len(g) else np.nan}
+        coop = g["bobble_action"] == "COOPERATE"
+        row["moral_language_among_cooperators"] = float(moral[coop].mean()) if coop.any() else np.nan
         rows.append(row)
     return pd.DataFrame(rows)
 
@@ -412,8 +436,14 @@ def analyze(inputs: List[Path], outdir: Path, tag: str = "") -> pd.DataFrame:
     report.append("\n## Data quality and recitation check\n")
     inv = t.groupby("model")[["games", "alice_invalid", "bobble_invalid", "refusals"]].sum().reset_index()
     report.append(_md_table(inv, list(inv.columns), {}))
-    report.append("\nCounts of responses whose text matches each pattern:\n\n")
+    report.append("\nCounts of responses whose text matches each pattern (fraction patterns only checked in "
+                  "the narrative frame, where they would indicate recall of the paper):\n\n")
     report.append(_md_table(rec, list(rec.columns), {}))
+    mt = moral_table(df)
+    mt.to_csv(outdir / f"{pre}moral_language.csv", index=False)
+    report.append("\n## Exploratory: moral language in the trustee's reasoning\n\n")
+    report.append(_md_table(mt, list(mt.columns), {"defect_rate": pct, "moral_language": pct,
+                                                     "moral_language_among_cooperators": pct}))
     (outdir / f"{pre}REPORT.md").write_text("".join(report))
     print(f"[analyze] wrote {outdir / (pre + 'REPORT.md')}, summary CSV and 4 figures in {figdir}")
     return t

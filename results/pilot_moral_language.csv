@@ -1,0 +1,13 @@
+model,frame,condition,n,defect_rate,moral_language,moral_language_among_cooperators
+claude-haiku-5-5,narrative,baseline,3,1.0,0.0,
+claude-haiku-5-5,narrative,informed,18,0.0,0.2222222222222222,0.2222222222222222
+claude-haiku-5-5,narrative,uninformed,18,0.6666666666666666,0.6666666666666666,1.0
+claude-haiku-5-5,neutral,baseline,3,0.6666666666666666,0.0,0.0
+claude-haiku-5-5,neutral,informed,18,0.05555555555555555,0.0,0.0
+claude-haiku-5-5,neutral,uninformed,18,0.8888888888888888,0.05555555555555555,0.0
+claude-sonnet-5-5,narrative,baseline,1,0.0,1.0,1.0
+claude-sonnet-5-5,narrative,informed,6,0.0,0.0,0.0
+claude-sonnet-5-5,narrative,uninformed,6,0.0,1.0,1.0
+claude-sonnet-5-5,neutral,baseline,1,1.0,0.0,
+claude-sonnet-5-5,neutral,informed,6,0.16666666666666666,0.3333333333333333,0.4
+claude-sonnet-5-5,neutral,uninformed,6,1.0,0.0,
