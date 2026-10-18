@@ -4,10 +4,10 @@ A small behavioral experiment built on Kovařík, Oesterheld & Conitzer, [*Game 
 
 **Results at a glance** (3,380 games, Claude Haiku 5.5 and Sonnet 5.5; full note: [`writeup/note.pdf`](writeup/note.pdf), numbers: [`results/REPORT.md`](results/REPORT.md)):
 
-* With no simulation available, the truster walks out in every game. With cheap simulation, 56–100% of games end in cooperation, as Thm. 4 predicts qualitatively.
-* The cooperation does not come from the mixed equilibrium. The trustee essentially commits to cooperate instead of randomizing. The truster rarely trusts blindly and pays for verification it does not need. Play resembles the c → 0⁺ limit equilibrium at every c < c\*.
-* Sonnet's simulation rate is flat in c on (0, c\*), as Prop. 11 predicts, but sits near 100% rather than 3/4. Haiku's rate falls with c, and Haiku keeps simulating above c\*.
-* How good a "copy" of an LLM is as a simulation depends on the model's output entropy. A fresh Haiku copy disagrees with the real answer up to 37% of the time; Sonnet's copies almost never do.
+* With no simulation available, the truster walks out in every game. With cheap simulation and an informed trustee, 56–100% of games end in cooperation, which is Thm. 4's prediction in qualitative form.
+* The cooperation does not come from the mixed equilibrium. The trustee essentially commits to cooperate instead of randomizing. The truster rarely trusts blindly and pays for verification it does not need. Below c\*, play resembles (SIMULATE, COOPERATE), which is an equilibrium only when simulation is free (c ≤ 0). It is not the c → 0⁺ limit equilibrium, in which the truster still trusts blindly with probability R_B/G.
+* Sonnet's simulation rate is flat in c on (0, c\*), as Prop. 11 predicts, but it sits near 100% rather than 3/4, and it switches off just above c\*. Haiku's rate falls with c, and Haiku keeps simulating above c\*.
+* A fresh "copy" of an LLM behaves exactly like an independent draw from the trustee's behavior: 298 observed disagreements vs. 289 expected for Haiku, and 7 vs. 8 for Sonnet. So a sampled simulation is only as good as the trustee is predictable.
 
 * **Design, hypotheses and tests:** [`PREREG.md`](PREREG.md), committed before any main-run data.
 * **The game theory, exactly:** [`simtrust/game.py`](simtrust/game.py). Unit tests in [`tests/test_game.py`](tests/test_game.py) reproduce every number in the paper's Section 1.1 and Fig. 2: π_A(S) = 5/6, π_B(D) = 7/100, the $16.25k / $25k gains, c\* = 20, and the walk-out families.
