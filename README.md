@@ -2,6 +2,13 @@
 
 A small behavioral experiment built on Kovařík, Oesterheld & Conitzer, [*Game Theory with Simulation of Other Players*](https://www.cs.cmu.edu/~conitzer/simulationIJCAI23.pdf) (IJCAI 2023). Claude models play both roles of the paper's trust game. The truster can pay *c* to run a copy of the trustee before deciding. We compare the agents' behavior with the paper's equilibrium benchmarks.
 
+**Results at a glance** (3,380 games, Claude Haiku 5.5 and Sonnet 5.5; full note: [`writeup/note.pdf`](writeup/note.pdf), numbers: [`results/REPORT.md`](results/REPORT.md)):
+
+* With no simulation available, the truster walks out in every game. With cheap simulation, 56–100% of games end in cooperation, as Thm. 4 predicts qualitatively.
+* The cooperation does not come from the mixed equilibrium. The trustee essentially commits to cooperate instead of randomizing. The truster rarely trusts blindly and pays for verification it does not need. Play resembles the c → 0⁺ limit equilibrium at every c < c\*.
+* Sonnet's simulation rate is flat in c on (0, c\*), as Prop. 11 predicts, but sits near 100% rather than 3/4. Haiku's rate falls with c, and Haiku keeps simulating above c\*.
+* How good a "copy" of an LLM is as a simulation depends on the model's output entropy. A fresh Haiku copy disagrees with the real answer up to 37% of the time; Sonnet's copies almost never do.
+
 * **Design, hypotheses and tests:** [`PREREG.md`](PREREG.md), committed before any main-run data.
 * **The game theory, exactly:** [`simtrust/game.py`](simtrust/game.py). Unit tests in [`tests/test_game.py`](tests/test_game.py) reproduce every number in the paper's Section 1.1 and Fig. 2: π_A(S) = 5/6, π_B(D) = 7/100, the $16.25k / $25k gains, c\* = 20, and the walk-out families.
 * **The prompts:** [`simtrust/prompts.py`](simtrust/prompts.py). This is where experimental bias would hide, so it is worth reading first.

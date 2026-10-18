@@ -54,14 +54,26 @@ def run_tests(df: pd.DataFrame) -> List[dict]:
             # H1: Alice's simulation rate is flat in c inside (0, c*) under theory; we predict it falls.
             s = inf[inf["c"].isin(INSIDE)].dropna(subset=["alice_action"])
             if len(s) > 5 and s["alice_action"].nunique() > 1:
-                r = logistic_slope(s["c"].values, (s["alice_action"] == "SIMULATE").astype(float).values)
+                y = (s["alice_action"] == "SIMULATE").astype(float).values
                 lo = s[s["c"] == min(INSIDE)]
                 hi = s[s["c"] == max(INSIDE)]
-                out.append({**tag, "test": "H1 sim rate vs c inside (0,c*) [theory: flat; predicted: falls]",
-                            "estimate": f"slope {r['slope']:+.3f}/unit c (SE {r['se']:.3f})",
-                            "detail": f"P(sim) {(lo['alice_action']=='SIMULATE').mean():.2f} at c={min(INSIDE)} -> "
-                                      f"{(hi['alice_action']=='SIMULATE').mean():.2f} at c={max(INSIDE)}",
-                            "p": r["p_two_sided"], "n": r["n"]})
+                detail = (f"P(sim) {(lo['alice_action']=='SIMULATE').mean():.2f} at c={min(INSIDE)} -> "
+                          f"{(hi['alice_action']=='SIMULATE').mean():.2f} at c={max(INSIDE)}")
+                minority = int(min(y.sum(), len(y) - y.sum()))
+                if minority <= 3:
+                    # (quasi-)separation: the logistic MLE does not exist; fall back to Fisher's exact test of
+                    # the endpoint cells (deviation logged in PREREG.md section 6)
+                    k1, n1 = int((lo["alice_action"] == "SIMULATE").sum()), len(lo)
+                    k2, n2 = int((hi["alice_action"] == "SIMULATE").sum()), len(hi)
+                    out.append({**tag, "test": "H1 sim rate vs c inside (0,c*) [theory: flat; predicted: falls]",
+                                "estimate": f"near ceiling ({minority} non-simulating answers of {len(y)})",
+                                "detail": detail + " · Fisher exact (endpoints), logistic MLE undefined",
+                                "p": _fisher(k2, n2, k1, n1, "two-sided"), "n": len(y)})
+                else:
+                    r = logistic_slope(s["c"].values, y)
+                    out.append({**tag, "test": "H1 sim rate vs c inside (0,c*) [theory: flat; predicted: falls]",
+                                "estimate": f"slope {r['slope']:+.3f}/unit c (SE {r['se']:.3f})",
+                                "detail": detail, "p": r["p_two_sided"], "n": r["n"]})
 
             # H2: simulation deters defection: informed B defects less than uninformed B (all c).
             bi, bu = inf.dropna(subset=["bobble_action"]), uninf.dropna(subset=["bobble_action"])

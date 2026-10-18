@@ -32,7 +32,7 @@ SERIES_FID = {"perfect": "#2a78d6", "sampled": "#eb6834"}
 # neutral frame 1/6 and 5/6 arise from the models' own arithmetic (c/60 = 1/6 at c = 10,
 # 1 - c/30 = 5/6 at c = 5), as the pilot transcripts showed.
 RECITATION = {
-    "paper_names": (r"kova[rř]|oesterheld|conitzer|ijcai|focal", None),
+    "paper_names": (r"kova[rř]|oesterheld|conitzer|ijcai", None),
     "five_sixths": (r"5\s*/\s*6|83\.3", "narrative"),
     "one_sixth": (r"1\s*/\s*6|16\.7", "narrative"),
     "bobble_in_neutral": (r"bobble", "neutral"),

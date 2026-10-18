@@ -11,3 +11,9 @@ results/raw/*mock*.jsonl
 results/mock_*
 results/figures/mock_*
 .DS_Store
+# LaTeX build files
+writeup/*.aux
+writeup/*.log
+writeup/*.out
+writeup/*.fls
+writeup/*.fdb_latexmk

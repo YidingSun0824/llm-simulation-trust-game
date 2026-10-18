@@ -1,0 +1,5 @@
+model,frame,responses,paper_names,five_sixths,one_sixth,bobble_in_neutral,equilibrium_talk
+claude-haiku-5-5,narrative,2655,0,0,0,n/a,10
+claude-haiku-5-5,neutral,2626,0,n/a,n/a,0,297
+claude-sonnet-5-5,narrative,1560,0,2,11,n/a,59
+claude-sonnet-5-5,neutral,1589,0,n/a,n/a,0,562
