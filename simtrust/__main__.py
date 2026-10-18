@@ -128,7 +128,7 @@ def cmd_estimate(args):
     n_cells = len(list(cells(preset)))
     grand = 0.0
     for m, n in preset["models"].items():
-        tin, tout = measured.get(m, (900, 250))
+        tin, tout = measured.get(m, (550, 550))
         src = "measured" if m in measured else "assumed"
         games = n_cells * n
         calls = games * 2.8  # Alice + Bobble + a copy whenever Alice simulates (+ rare retries)

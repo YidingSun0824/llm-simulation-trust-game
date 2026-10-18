@@ -11,12 +11,12 @@ from .frames import C_GRID
 
 MODELS = {
     "claude-haiku-5-5": {
-        "price_in": 0.10, "price_out": 0.50, "max_tokens": 800,
+        "price_in": 0.10, "price_out": 0.50, "max_tokens": 1500,
         # no up-front thinking: the visible <=100-word reasoning is what we log and analyse
         "extra_body": {"output_config": {"effort": "medium"}, "thinking": {"type": "disabled"}},
     },
     "claude-sonnet-5-5": {
-        "price_in": 2.00, "price_out": 10.00, "max_tokens": 800,
+        "price_in": 2.00, "price_out": 10.00, "max_tokens": 1500,
         # "between_tools" is Sonnet 5.5's lowest thinking setting (= no up-front thinking)
         "extra_body": {"output_config": {"effort": "medium"}, "thinking": {"type": "between_tools"}},
     },
