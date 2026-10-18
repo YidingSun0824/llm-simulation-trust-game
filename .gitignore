@@ -1,0 +1,13 @@
+# secrets
+.env
+# python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+# mock / scratch outputs (real results ARE committed)
+results/raw/*mock*.jsonl
+results/mock_*
+results/figures/mock_*
+.DS_Store
