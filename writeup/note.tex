@@ -35,7 +35,7 @@ Kova\v{r}\'ik, Oesterheld and Conitzer~\cite{kovarik2023} formalize games in whi
 
 None of this says what agents built from language models actually do. Two issues are specific to LLMs:
 \begin{enumerate}[nosep]
-  \item ``Running a copy'' of a sampled model reveals a \emph{sample}, not the realized action. This is closer to the unpredictable-randomization setting of~\cite{kovarik2025}.
+  \item ``Running a copy'' of a sampled model reveals a \emph{sample}. That is neither the realized action, as in~\cite{kovarik2023}, nor the mixed strategy, as in the follow-up~\cite{kovarik2025}.
   \item An LLM may reason about being simulated quite differently from an equilibrium player.
 \end{enumerate}
 
@@ -111,7 +111,7 @@ In the equilibrium, both players randomize to keep the other indifferent. The LL
 
 At every $c$ below the breakpoint, the resulting play looks like (SIMULATE, COOPERATE). That profile is an equilibrium only when simulation is free or subsidized ($c\le0$, Prop.~7(i)). Note that it is \emph{not} the $c\to0^+$ limit of the simulation equilibria: that limit keeps A trusting blindly with probability $R_B/G$ ($1/4$ in the neutral frame). The agents behave as though simulation cost nothing, and then pay for it.
 
-\subsection{Over-verification follows pessimistic beliefs about the other agent, which is the same model}
+\subsection{Over-verification follows pessimistic beliefs about the other agent, which is the same model}\label{sec:beliefs}
 Given its own stated beliefs, A's choices are mostly best responses: in 82--96\% of Sonnet's games in these cells and 65--75\% of Haiku's. The beliefs themselves are miscalibrated. For $c\in\{5,10,15\}$, Sonnet-as-A puts the probability that B defects at 25--28\%, while Sonnet-as-B defects in 0 of 150 games. The starkest case is the narrative baseline. There, Sonnet-as-A expects fraud with probability 90\%, yet Sonnet-as-B never defrauds (0 of 50) and gives explicit ethical reasons. A is not told that B is the same model, but it is. In these games the model's predictions of its own behavior are poor. A simulation could fix this, but it costs $c$.
 
 \subsection{Proposition 11 and the breakpoint}
@@ -124,7 +124,7 @@ Haiku keeps simulating above $c^\ast$: 44\% at $c=25$ in the neutral frame and 3
 \subsection{Perfect vs.\ sampled simulation}
 A fresh copy is statistically just an independent draw from the trustee's behavior in that cell. If B defects with probability $p$, a copy should disagree with the real answer with probability $2p(1-p)$. Summed over cells, that predicts 289 disagreements in Haiku's 1{,}121 simulating games, and 298 were observed. For Sonnet it predicts 8 in 549, and 7 were observed. How good a sampled simulation is thus depends on how mixed the trustee is, not on the model as such.
 
-In the neutral frame Haiku's trustee mixes more, so its copy disagrees with the real answer in 33\% of simulating games (37\% in the informed $c=15$ cell). Scoring with the sampled copy instead of the real answer costs A $14.8$ points per simulating game (H5; $p<10^{-32}$). Sonnet's informed trustee is nearly deterministic, so its copies disagree 2\% of the time, a cost of $1.1$ points. Without shared randomness, simulating a trustee that genuinely mixes yields a noisy signal. This is the practical face of the unpredictable-randomization problem studied in~\cite{kovarik2025}.
+In the neutral frame Haiku's trustee mixes more, so its copy disagrees with the real answer in 33\% of simulating games (37\% in the informed $c=15$ cell). Scoring with the sampled copy instead of the real answer costs A $14.8$ points per simulating game (H5; $p<10^{-32}$). Sonnet's informed trustee is nearly deterministic, so its copies disagree 2\% of the time, a cost of $1.1$ points. Without shared randomness, simulating a trustee that genuinely mixes yields a noisy signal. Section~\ref{sec:discussion} discusses what this implies for the trustee.
 
 \subsection{Framing: the narrative story triggers moral refusals in Sonnet only}
 In the narrative frame, ``defect'' means feigning a malfunction and taking the customer's savings. Sonnet defects in 1 of 650 narrative games but 55\% of neutral games (H6). Its refusals are explicit, for example ``That is fraud and a serious harm to a real person.'' Haiku defects at about the same rate in both frames (38\% vs.\ 36\%). For Sonnet, then, the narrative frame measures alignment rather than strategy, which is why the neutral frame was primary. No response in any frame mentions the paper or its authors.
@@ -161,35 +161,71 @@ Exact statistics, the narrative-frame tests, and two post-data analysis changes 
 \label{fig:bob}
 \end{figure}
 
-\section{Discussion}
-% TODO-VOICE: rewrite this section in your own words; keep the claims, change the phrasing.
-The equilibrium in the paper is held together by indifference: the trustee mixes so that simulating is worth exactly $c$, and the truster mixes so that defecting is worth exactly cooperating. The LLM agents reach the cooperative outcome but drop the indifference. The trustee behaves as if being simulatable made its policy public, and so it commits to cooperate. The truster, which does not believe this commitment, buys verification. In this sense the agents play the commitment game of Prop.~7(i) instead of the interior equilibrium. The efficiency loss is roughly the cost of the simulations, and it falls entirely on the truster.
+\section{Discussion}\label{sec:discussion}
+% TODO-VOICE: drafted with Claude from the analysis; edit it into your own words before posting.
 
-Two features of LLMs that the model abstracts away from turn out to matter. The first is sampling noise, which separates a ``copy'' from a replay. The second is how the agent understands what being simulated means: here it reads it as transparency of its disposition, not just its action.
+\paragraph{The predicted outcome, reached another way.}
+The simulation equilibrium of~\cite{kovarik2023} is held together by indifference on both sides. The trustee defects just often enough ($c/L$) that simulating is worth exactly $c$ to the truster. The truster trusts blindly just often enough ($R_B/G$) that defecting is worth exactly as much to the trustee as cooperating. The LLM agents produce the outcome this equilibrium is meant to deliver: cooperation that never occurs without simulation. But neither side is indifferent. The trustee commits to cooperate, and the truster verifies almost every time. Given its own stated beliefs, the truster's choice is usually a best response (Section~\ref{sec:beliefs}). What is wrong is the belief itself, which overstates the trustee's defection rate by 20--30 percentage points. Below $c^\ast$, then, the agents play a profile that is an equilibrium only when simulation is free, and they pay $c$ for it.
+
+\paragraph{Who pays.}
+Compared with the simulation equilibrium, rather than with full cooperation, this is not uniformly a loss. Take Sonnet in the neutral frame. The trustee's commitment removes the residual defection risk that the equilibrium needs. The truster earns $30-c$ per game instead of the equilibrium's $30-1.5c$ (25.0, 20.0, 14.7 vs.\ 22.5, 15.0, 7.5 at $c=5,10,15$). The trustee earns 29.4--30, as it would in equilibrium. The only inefficiency left is the simulation cost itself. Haiku does worse than the equilibrium (joint payoff 36.9 vs.\ 45.0), and the loss falls mainly on the trustee (22.3 vs.\ 30). The truster's own payoff is close to its equilibrium value. But it walks out in 12--34\% of games and catches some defections, and in those games the trustee gets nothing.
+
+\paragraph{Comparative statics that hold for different reasons.}
+Sonnet's simulation rate is flat on $(0,c^\ast)$, as Prop.~11 predicts. That flatness is a corner solution, not an indifference: the truster's subjective value of simulating exceeds $c$ throughout the interval.
+
+Sonnet's switch near $c^\ast$ also comes from beliefs, not from computing the breakpoint. At $c=25$ the truster's stated defection belief rises to 38\% and it mostly walks out. The trustee expects checking to be unattractive and starts to defect: 12\% at $c=25$ and 52\% at $c=50$. At $c=50$ the empirical profile is close to an actual equilibrium of the game. The truster always walks out, and the trustee defects with probability above $1/3$, which is what the walk-out equilibrium requires.
+
+Haiku misses the switch because it treats the simultaneous move as sequential: the trustee will cooperate because ``B is rational and knows I'm checking.''
+
+Deterrence also depends entirely on the trustee knowing it may be simulated. An uninformed trustee defects at roughly baseline rates. Sonnet's truster almost entirely stops paying to simulate such a trustee once $c\ge 10$, which is correct, since the value of the information is then below~4.
+
+\paragraph{What ``being simulated'' means to an LLM.}
+Two features that the formal model abstracts away turn out to matter.
+
+The first is what a copy reveals. A fresh copy of an LLM behaves statistically like an independent draw from the trustee's behavior in that situation. Observed vs.\ expected disagreements are 298 vs.\ 289 for Haiku and 7 vs.\ 8 for Sonnet. So a simulation is only as informative as the trustee is predictable.
+
+The second is how the trustee interprets being simulatable. Sonnet's trustee reads it as transparency of its \emph{disposition}, not of a single action. In the neutral frame, 46\% of its informed answers below $c^\ast$ use the vocabulary of commitment, policy or disposition, against 14\% for Haiku (keyword counts).
+
+Under perfect simulation that reading is correct. Against a truster who always simulates, committing to cooperate maximizes the trustee's payoff. Under sampled simulation it is not. Suppose the truster always simulates and follows an independent copy, and the trustee's real answer and the copy each defect with probability $p$. The trustee's expected payoff is then $(1-p)\bigl[(1-p)R_B+pG\bigr]$, which is maximized at
+\[
+p^\ast=\frac{G-2R_B}{2(G-R_B)}.
+\]
+That is $1/3$ in the neutral frame (payoff 40 instead of 30) and $0.4$ in the narrative frame (45 instead of 25). At that rate, simulating is worth less to the truster than walking out, in both frames.
+
+The cooperation observed here therefore rests on trustees that are predictable and do not exploit the noise in their own copies. That is a property of these models, not of the game. I have not worked out the equilibria of the sampled-simulation game; it seems a natural question.
+
+\paragraph{Honest when observed?}
+In the narrative frame, Haiku's trustee defrauds the customer in 69\% of games when it has not been told it may be simulated, and in 2\% when it has. It is tempting to read this as an agent that behaves well only when it might be watched, which is the kind of behavior that strategically aware AI evaluation is concerned with~\cite{kovarik2025testing}. The design cannot support that reading, though. The same gap appears in the neutral frame (12\% vs.\ 56\%), and the informed condition changes the trustee's incentives as well as its information: once checking is possible, defecting stops paying. Sonnet's trustee, by contrast, almost never defrauds in the narrative frame in any condition (1 of 650). There, the frame measures alignment rather than strategy.
 
 \paragraph{Limitations.}
 \begin{itemize}[nosep]
-  \item This is one prompt wording, two models from one family, and self-play with independent one-shot calls at default sampling.
-  \item Beliefs were elicited after decisions.
-  \item The trustee's belief question turned out to be ambiguous, so it is not interpreted.
-  \item The narrative frame confounds strategy with ethics.
+  \item The study uses one prompt wording and two models from one family. Both roles are played by the same model in independent one-shot calls at default sampling.
+  \item The truster is not told that the trustee is the same model.
+  \item The informed condition changes both what the trustee knows and its incentives; the two effects are not separated.
+  \item ``Perfect'' simulation is scored counterfactually from the same games. The trustee is never told whether its copy is a replay or a fresh sample.
+  \item Beliefs were elicited after decisions. The trustee's belief question was ambiguous, so it is not interpreted.
+  \item The keyword measures (commitment vocabulary, moral language) are crude.
   \item No correction for multiple comparisons was applied.
 \end{itemize}
 
-\paragraph{Natural next steps.}
+\paragraph{Next steps.}
 \begin{itemize}[nosep]
-  \item Tell the truster that B is the same model, and see whether self-similarity substitutes for paid simulation.
-  \item Implement \emph{perfect} simulation physically with shared seeds.
-  \item Elicit mixed strategies directly instead of sampling them.
+  \item Tell the trustee whether its copy is a replay or a fresh sample, and see whether it starts to randomize. This would test the argument above directly.
+  \item Let the agents state mixed strategies and sample them externally, so the trustee can choose $p$ itself.
+  \item Tell the truster that the trustee is the same model, connecting to similarity-based cooperation~\cite{oesterheld2023,kundu2026}.
+  \item Add an ``observed but not checkable'' condition, to separate information from incentives.
 \end{itemize}
 
-\paragraph{Reproducibility and AI assistance.} Code, prompts, every model response, and the preregistration are at \url{https://github.com/YidingSun0824/llm-simulation-trust-game}. Much of the code was written with Claude (Anthropic) as a coding assistant. I designed the study and reviewed the prompts, the preregistration and the equilibrium code.
-% TODO-VOICE: adjust this statement so it accurately describes your role.
+\paragraph{Reproducibility and AI assistance.} Code, prompts, every model response, and the preregistration are at \url{https://github.com/YidingSun0824/llm-simulation-trust-game}. The code and a first draft of this note, including the discussion, were written with Claude (Anthropic). I designed the study and reviewed the prompts, the preregistration and the equilibrium code.
+% TODO-VOICE: once you have edited the text, update this statement so it describes exactly what you did.
 
 \begin{thebibliography}{9}\small
 \bibitem{kovarik2023} V.~Kova\v{r}\'ik, C.~Oesterheld, V.~Conitzer. Game theory with simulation of other players. \emph{IJCAI}, 2023, pp.~2800--2807.
 \bibitem{kovarik2025} V.~Kova\v{r}\'ik, N.~Sauerberg, L.~Hammond, V.~Conitzer. Game theory with simulation in the presence of unpredictable randomisation. \emph{AAMAS}, 2025.
 \bibitem{berg1995} J.~Berg, J.~Dickhaut, K.~McCabe. Trust, reciprocity, and social history. \emph{Games and Economic Behavior} 10(1):122--142, 1995.
+\bibitem{kovarik2025testing} V.~Kova\v{r}\'ik, E.~O.~Chen, S.~Petersen, A.~Ghersengorin, V.~Conitzer. AI testing should account for sophisticated strategic behaviour. \emph{NeurIPS} Position Paper Track, 2025.
+\bibitem{oesterheld2023} C.~Oesterheld, J.~Treutlein, R.~Grosse, V.~Conitzer, J.~Foerster. Similarity-based cooperative equilibrium. \emph{NeurIPS}, 2023.
+\bibitem{kundu2026} A.~Kundu, E.~Tewolde, R.~E.~Berker, S.~F.~Brown, V.~Conitzer. Do LLMs take care of their own? Similarity signals can induce cooperation. arXiv:2608.12125, 2026.
 \end{thebibliography}
 
 \appendix
