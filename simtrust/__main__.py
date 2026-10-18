@@ -22,18 +22,38 @@ ROOT = Path(__file__).resolve().parent.parent
 RAW = ROOT / "results" / "raw"
 
 
+_KEY_SOURCE = "unset"
+
+
 def _load_env():
+    """Read .env and let it WIN over any ANTHROPIC_API_KEY already set in the shell
+    (Claude Code, conda or an old export can leave a stale key there)."""
+    global _KEY_SOURCE
+    shell_key = os.environ.get("ANTHROPIC_API_KEY")
     try:
-        from dotenv import load_dotenv
-        load_dotenv(ROOT / ".env")
+        from dotenv import dotenv_values
+        file_key = (dotenv_values(ROOT / ".env").get("ANTHROPIC_API_KEY") or "").strip().strip('"').strip("'")
     except ImportError:
-        pass
+        file_key = ""
+    if file_key:
+        os.environ["ANTHROPIC_API_KEY"] = file_key
+        _KEY_SOURCE = ".env" + (" (overriding a different key set in your shell)" if shell_key and shell_key != file_key else "")
+    elif shell_key:
+        _KEY_SOURCE = "shell environment variable (no key in .env)"
+
+
+def _mask(key: str) -> str:
+    return f"{key[:11]}…{key[-4:]} ({len(key)} chars)" if len(key) > 16 else "<too short>"
 
 
 def _need_key():
     key = os.environ.get("ANTHROPIC_API_KEY", "")
-    if not key.startswith("sk-ant-"):
-        sys.exit("No API key found. Copy .env.example to .env and paste your key after ANTHROPIC_API_KEY=")
+    if not key.startswith("sk-ant-") or "PASTE" in key:
+        sys.exit("No real API key found. Open .env, replace sk-ant-PASTE-YOUR-KEY-HERE with your key, and SAVE "
+                 "(the dot on the editor tab must disappear).")
+    if any(ch.isspace() for ch in key):
+        sys.exit("The API key in .env contains a space or line break. Put it on one line with nothing after it.")
+    print(f"[key] using {_mask(key)} from {_KEY_SOURCE}", flush=True)
 
 
 def _agents(preset: dict, mock: bool):
