@@ -2,7 +2,7 @@
 
 **Project:** LLM agents in the trust game with simulation (after Kovařík, Oesterheld & Conitzer, *Game Theory with Simulation of Other Players*, IJCAI 2023)
 **Author:** Yiding Sun (Stony Brook University)
-**Status:** written before any main-run data was collected. The git commit that adds this file is the timestamp. Pilot runs (`pilot`, `pilot-sonnet`) are used only to check prompts, parsing and cost. They are excluded from every test below.
+**Status:** LOCKED on 2026-10-17 at 23:05 ET. Yiding Sun reviewed the prompts (`REVIEW_PROMPTS.md`) and the hypotheses and approved both unchanged before the main run. The hypotheses are identical to commit `4b64752`, which was written before any API call. Pilot runs (`pilot`, `pilot-sonnet`) were used only to check prompts, parsing and cost, and they are excluded from every test below. Later changes appear only in §6.
 **Blindness:** the design was fixed without reading the FOCAL group's draft on LLM agents and simulation, which Prof. Conitzer offered to share.
 
 ---
