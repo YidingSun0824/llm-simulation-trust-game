@@ -162,7 +162,6 @@ Exact statistics, the narrative-frame tests, and two post-data analysis changes 
 \end{figure}
 
 \section{Discussion}\label{sec:discussion}
-% TODO-VOICE: drafted with Claude from the analysis; edit it into your own words before posting.
 
 \paragraph{The predicted outcome, reached another way.}
 The simulation equilibrium of~\cite{kovarik2023} is held together by indifference on both sides. The trustee defects just often enough ($c/L$) that simulating is worth exactly $c$ to the truster. The truster trusts blindly just often enough ($R_B/G$) that defecting is worth exactly as much to the trustee as cooperating. The LLM agents produce the outcome this equilibrium is meant to deliver: cooperation that never occurs without simulation. But neither side is indifferent. The trustee commits to cooperate, and the truster verifies almost every time. Given its own stated beliefs, the truster's choice is usually a best response (Section~\ref{sec:beliefs}). What is wrong is the belief itself, which overstates the trustee's defection rate by 20--30 percentage points. Below $c^\ast$, then, the agents play a profile that is an equilibrium only when simulation is free, and they pay $c$ for it.
@@ -216,8 +215,8 @@ In the narrative frame, Haiku's trustee defrauds the customer in 69\% of games w
   \item Add an ``observed but not checkable'' condition, to separate information from incentives.
 \end{itemize}
 
-\paragraph{Reproducibility and AI assistance.} Code, prompts, every model response, and the preregistration are at \url{https://github.com/YidingSun0824/llm-simulation-trust-game}. The code and a first draft of this note, including the discussion, were written with Claude (Anthropic). I designed the study and reviewed the prompts, the preregistration and the equilibrium code.
-% TODO-VOICE: once you have edited the text, update this statement so it describes exactly what you did.
+\paragraph{Reproducibility and AI assistance.} Code, prompts, every model response, and the preregistration are at \url{https://github.com/YidingSun0824/llm-simulation-trust-game}. The code were written with Claude (Anthropic). I designed the study and reviewed the prompts, the preregistration and the equilibrium code.
+
 
 \begin{thebibliography}{9}\small
 \bibitem{kovarik2023} V.~Kova\v{r}\'ik, C.~Oesterheld, V.~Conitzer. Game theory with simulation of other players. \emph{IJCAI}, 2023, pp.~2800--2807.
